@@ -34,7 +34,7 @@ body
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #00000077;
+    background: #000000;
     border: 1px solid #ffffff77;
     color: #ffffff;
     font-family: Helvetica, Arial, sans-serif;
@@ -45,6 +45,7 @@ body
     cursor:help;
     transform: scale(0, 0);
     transition: transform 0.3s;
+    
 }
 
 .point .text

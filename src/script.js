@@ -101,18 +101,37 @@ const material1 = new THREE.MeshBasicMaterial({
     map: bakedTexture1
 })
 
+
+let mixer;
+let animationObject = {
+    actions: {},
+
+};
+
+
 gltfLoader.load(
   "../models/Isometric_Room_VannieuwenhuyseLien.glb",
-  gltf => {
+    (gltf) => {
+       
+        
+
+
     gltf.scene.traverse(child => {
       if (child.isMesh) {
         child.material = material1;
       }
     });
 
-    scene.add(gltf.scene);
+        mixer = new THREE.AnimationMixer(gltf.scene);
+        animationObject.actions = gltf.animations.map((clip) => {
+            mixer.clipAction(clip).play();
+        });
+        
+      scene.add(gltf.scene);
+      gltf.scene.scale.set(0.4, 0.4, 0.4);
   }
 );
+
 
 
 /**
@@ -121,15 +140,15 @@ gltfLoader.load(
 
 const points = [
     {
-        position: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(-1.3, 1.4, -1.3),
         element: document.querySelector('.point-0')
     },
     {
-        position: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(-1.7, 1.1, -0.2),
         element: document.querySelector('.point-1')
     },
     {
-        position: new THREE.Vector3(2, 2, 2),
+        position: new THREE.Vector3(-0.3, 1.2, -0.9),
         element: document.querySelector('.point-2')
     }
 ]
@@ -176,7 +195,7 @@ window.addEventListener('resize', () =>
 // Base camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 4
-camera.position.y = 5
+camera.position.y = 5  
 camera.position.z = 4
 scene.add(camera)
 
@@ -197,20 +216,35 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 
+    
 /**
  * Animate
  */
 const raycaster = new THREE.Raycaster()
 
 const clock = new THREE.Clock()
+let previousTime = 0    
+
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+        const deltaTime = elapsedTime - previousTime
+        previousTime = elapsedTime
+   
+            // Update mixer
+            if (mixer) {
+                mixer.update(deltaTime);
+            }
 
     // Update controls
     controls.update()
 
-    if(sceneReady){
+    if (mixer) {
+        mixer.update(deltaTime);
+    }
+
+    if (sceneReady) {
+        
         for(const point of points)
             {
                 const screenPosition = point.position.clone()
@@ -236,12 +270,15 @@ const tick = () =>
                         {
                             point.element.classList.add('visible')
                         }
+                    
+                
                     }
         
                 const translateX = screenPosition.x * sizes.width * 0.5
                 const translateY = - screenPosition.y * sizes.height * 0.5
                 point.element.style.transform = `translateX(${translateX}px) translateY(${translateY}px)`
-            }
+        }
+       
     }
     
 
