@@ -87,7 +87,7 @@ gltfLoader.setDRACOLoader(dracoLoader)
 /**
  * Textures
  */
-const bakedTexture1 = textureLoader.load('path/to/baked.jpg');
+const bakedTexture1 = textureLoader.load('/textures/baked2.jpg');
 bakedTexture1.flipY = false;
 bakedTexture1.colorSpace = THREE.SRGBColorSpace;
 
@@ -102,19 +102,17 @@ const material1 = new THREE.MeshBasicMaterial({
 })
 
 gltfLoader.load(
-    '/path/to/model.glb',
-    (gltf) =>
-    {
-        gltf.scene.traverse((child) =>
-        {
-            if(child.isMesh){
-                child.material = material1;
-            }
-        });
+  "../models/Isometric_Room_VannieuwenhuyseLien.glb",
+  gltf => {
+    gltf.scene.traverse(child => {
+      if (child.isMesh) {
+        child.material = material1;
+      }
+    });
 
-        scene.add(gltf.scene)
-    }
-)
+    scene.add(gltf.scene);
+  }
+);
 
 
 /**
